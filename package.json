@@ -1,0 +1,47 @@
+{
+  "name": "caculator-functional",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://github.com/quytxv/calculator-functional",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-react": "^7.19.0",
+    "gh-pages": "^2.0.1",
+    "prettier": "^1.17.1",
+    "react-scripts": "^3.0.1"
+  },
+  "dependencies": {
+    "big.js": "^5.2.2",
+    "github-fork-ribbon-css": "^0.2.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
+  },
+  "prettier": {
+    "trailingComma": "all"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "description": "React caculator by functional components",
+  "main": "index.js",
+  "repository": "git@github.com:quytxv/calculator-functional.git",
+  "author": "Quy Tran Xuan Vu <quy.txv@gmail.com>"
+}
