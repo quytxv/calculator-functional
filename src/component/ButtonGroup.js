@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from './Button';
 
-const ButtonGroup = ({groupName, buttonList, clickHandler}) => {
-    const handleClick = (name) => {
-        clickHandler(name);
-    };
-
+const ButtonGroup = ({groupName, buttonList}) => {
     return (
         <div key={groupName}>
             {
@@ -15,7 +11,7 @@ const ButtonGroup = ({groupName, buttonList, clickHandler}) => {
                     return <Button
                         key={buttonName}
                         name={buttonName}
-                        clickHandler={handleClick}
+                        // clickHandler={handleClick}
                         orange={orange}
                         wide={wide}
                     />;
@@ -28,7 +24,6 @@ const ButtonGroup = ({groupName, buttonList, clickHandler}) => {
 ButtonGroup.propTypes = {
     groupName: PropTypes.string.isRequired,
     buttonList: PropTypes.object.isRequired,
-    clickHandler: PropTypes.func,
 };
 
 export default ButtonGroup;
