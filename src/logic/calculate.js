@@ -1,125 +1,137 @@
 import big from 'big.js';
-
 import operate from './operate';
 import isNumber from './isNumber';
 
-export default function calculate(obj, buttonName) {
+export default function calculate(buttonName, state, dispatch) {
     if (buttonName === 'AC') {
-        return {
-            total: null,
-            next: null,
-            operation: null,
-        };
+        dispatch({type: 'INIT'});
+
+        return;
     }
 
     if (isNumber(buttonName)) {
-        if (buttonName === '0' && obj.next === '0') {
-            return {};
+        if (buttonName === '0' && state.next === '0') {
+            return;
         }
         // If there is an operation, update next
-        if (obj.operation) {
-            if (obj.next) {
-                return {next: obj.next + buttonName};
-            }
-            return {next: buttonName};
+        if (state.operation) {
+            const next = (state.next ? state.next : '') + buttonName;
+            dispatch({type: 'UPDATE', name: 'next', value: next});
+
+            return;
         }
         // If there is no operation, update next and clear the value
-        if (obj.next) {
-            const next = obj.next === '0' ? buttonName : obj.next + buttonName;
-            return {
-                next,
-                total: null,
-            };
+        if (state.next) {
+            const next = (state.next === '0' ? buttonName : state.next) + buttonName;
+            dispatch({type: 'UPDATE', name: 'next', value: next});
+
+            return;
         }
-        return {
-            next: buttonName,
-            total: null,
-        };
+
+        dispatch({type: 'UPDATE', name: 'total', value: null});
+        dispatch({type: 'UPDATE', name: 'next', value: buttonName});
+
+        return;
     }
 
     if (buttonName === '%') {
-        if (obj.operation && obj.next) {
-            const result = operate(obj.total, obj.next, obj.operation);
-            return {
-                total: big(result)
-                    .div(big('100'))
-                    .toString(),
-                next: null,
-                operation: null,
-            };
+        if (state.operation && state.next) {
+            const result = operate(state.total, state.next, state.operation);
+            const total = big(result).div(big('100')).toString();
+            dispatch({type: 'UPDATE', name: 'total', value: total});
+            dispatch({type: 'UPDATE', name: 'next', value: null});
+            dispatch({type: 'UPDATE', name: 'operation', value: null});
+
+            return;
         }
-        if (obj.next) {
-            return {
-                next: big(obj.next)
-                    .div(big('100'))
-                    .toString(),
-            };
+        if (state.next) {
+            const next = big(state.next).div(big('100')).toString();
+            dispatch({type: 'UPDATE', name: 'next', value: next});
+
+            return;
         }
-        return {};
+
+        return;
     }
 
     if (buttonName === '.') {
-        if (obj.next) {
+        if (state.next) {
             // ignore a . if the next number already has one
-            if (obj.next.includes('.')) {
-                return {};
+            if (state.next.includes('.')) {
+                return;
             }
-            return {next: obj.next + '.'};
+
+            const next = state.next + '.';
+            dispatch({type: 'UPDATE', name: 'next', value: next});
+
+            return;
         }
-        return {next: '0.'};
+
+        dispatch({type: 'UPDATE', name: 'next', value: '0.'});
+        return;
     }
 
     if (buttonName === '=') {
-        if (obj.next && obj.operation) {
-            return {
-                total: operate(obj.total, obj.next, obj.operation),
-                next: null,
-                operation: null,
-            };
+        if (state.next && state.operation) {
+            const total =operate(state.total, state.next, state.operation);
+            dispatch({type: 'UPDATE', name: 'total', value: total});
+            dispatch({type: 'UPDATE', name: 'next', value: null});
+            dispatch({type: 'UPDATE', name: 'operation', value: null});
+
+            return;
         } else {
             // '=' with no operation, nothing to do
-            return {};
+            return;
         }
     }
 
     if (buttonName === '+/-') {
-        if (obj.next) {
-            return {next: (-1 * parseFloat(obj.next)).toString()};
+        if (state.next) {
+            const next = (-1 * parseFloat(state.next)).toString();
+            dispatch({type: 'UPDATE', name: 'next', value: next});
+
+            return;
         }
-        if (obj.total) {
-            return {total: (-1 * parseFloat(obj.total)).toString()};
+        if (state.total) {
+            const total = (-1 * parseFloat(state.total)).toString();
+            dispatch({type: 'UPDATE', name: 'total', value: total});
+
+            return;
         }
-        return {};
+        return;
     }
 
     // Button must be an operation
 
     // When the user presses an operation button without having entered
     // a number first, do nothing.
-    // if (!obj.next && !obj.total) {
+    // if (!state.next && !state.total) {
     //   return {};
     // }
 
     // User pressed an operation button and there is an existing operation
-    if (obj.operation) {
-        return {
-            total: operate(obj.total, obj.next, obj.operation),
-            next: null,
-            operation: buttonName,
-        };
+    if (state.operation) {
+        const total = operate(state.total, state.next, state.operation);
+        dispatch({type: 'UPDATE', name: 'total', value: total});
+        dispatch({type: 'UPDATE', name: 'next', value: null});
+        dispatch({type: 'UPDATE', name: 'operation', value: buttonName});
+
+        return;
     }
 
     // no operation yet, but the user typed one
 
     // The user hasn't typed a number yet, just save the operation
-    if (!obj.next) {
-        return {operation: buttonName};
+    if (!state.next) {
+        dispatch({type: 'UPDATE', name: 'operation', value: buttonName});
+
+        return;
     }
 
     // save the operation and shift 'next' into 'total'
-    return {
-        total: obj.next,
-        next: null,
-        operation: buttonName,
-    };
+    dispatch({type: 'UPDATE', name: 'total', value: state.next});
+    dispatch({type: 'UPDATE', name: 'next', value: null});
+    dispatch({type: 'UPDATE', name: 'operation', value: buttonName});
+
+    return;
 }

@@ -1,31 +1,22 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Display from './Display';
 import ButtonPanel from './ButtonPanel';
-import calculate from '../logic/calculate';
+import {CalculationProvider} from '../context/calculationContext';
 import './App.css';
 
+const initialState = {
+    total: null,
+    next: null,
+    operation: null,
+};
+
 const App = () => {
-    const [total, setTotal] = useState(null);
-    const [next, setNext] = useState(null);
-    const [operation, setOperation] = useState(null);
-
-    const handleClick = (buttonName) => {
-        const {
-            total: newTotal = total,
-            next: newNext = next,
-            operation: newOperation = operation,
-        } = calculate({total, next, operation}, buttonName);
-        console.log(calculate({total, next, operation}, buttonName));
-        console.log(total, next, operation);
-        setTotal(newTotal);
-        setNext(newNext);
-        setOperation(newOperation);
-    };
-
     return (
         <div className="component-app">
-            <Display value={next || total || '0'} />
-            <ButtonPanel clickHandler={handleClick} />
+            <CalculationProvider initialState={initialState}>
+                <Display/>
+                <ButtonPanel/>
+            </CalculationProvider>
         </div>
     );
 };
